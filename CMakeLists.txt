@@ -1,0 +1,109 @@
+cmake_minimum_required(VERSION 3.7.2)
+
+set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
+set(PROJECT_VESRION 0.0.${PATCH_VERSION})
+
+project(ip_filter VERSION ${PROJECT_VESRION})
+
+find_package(GTest REQUIRED)
+
+configure_file(src/version.h.in src/version.hpp)
+
+add_executable(ip_filter
+    src/ip_filter.cpp
+)
+add_library(version_lib
+    src/lib.cpp
+    src/lib.hpp
+)
+add_executable(test_ip_filter_gtest
+    test/test_ip_filter_gtest.cpp
+)
+
+set_target_properties(ip_filter version_lib PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+)
+
+target_include_directories(version_lib
+    PRIVATE "${CMAKE_BINARY_DIR}/src"
+)
+
+target_link_libraries(ip_filter PRIVATE
+    version_lib
+)
+
+target_include_directories(test_ip_filter_gtest
+    PRIVATE ${GTEST_INCLUDE_DIRS} "${CMAKE_SOURCE_DIR}/src"
+)
+
+target_link_libraries(test_ip_filter_gtest
+    ${GTEST_BOTH_LIBRARIES}
+    version_lib
+)
+
+# clang-tidy
+option(CLANG-TIDY "Should do checking or not" OFF)
+message(STATUS "<<CLANG-TIDY: ${CLANG-TIDY}>>")
+if (CLANG-TIDY)
+    set(CMAKE_CXX_CLANG_TIDY clang-tidy)
+endif()
+
+# clang-format
+option(CLANG-FORMAT "Should do formatting or not" OFF)
+message(STATUS "<<CLANG-FORMAT: ${CLANG-FORMAT}>>")
+if (CLANG-FORMAT)
+    find_program(CLANG-FORMAT_PATH NAMES clang-format REQUIRED)
+    message(STATUS "Найден clang-format: ${CLANG-FORMAT_PATH}")
+    file(GLOB_RECURSE CLANG-FORMAT_SRC CONFIGURE_DEPENDS *.*pp)
+    # исключить все пути, содержащие /CMakeFiles/ (или \CMakeFiles\)
+    # и все пути, содержащие /googletest/ (или \googletest\)
+    list(FILTER CLANG-FORMAT_SRC EXCLUDE REGEX ".*/CMakeFiles/.*|.*/googletest/.*")
+    message(STATUS "Найдены src: ${CLANG-FORMAT_SRC}")
+    add_custom_target(clangformat
+        COMMAND ${CLANG-FORMAT_PATH} -i ${CLANG-FORMAT_SRC}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Форматирование ${PROJECT_NAME} с ${CLANG-FORMAT_PATH}"
+    )
+    add_dependencies(ip_filter clangformat)
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "<<Сборка: ${CMAKE_BUILD_TYPE}>>")
+    target_compile_options(ip_filter PRIVATE
+    -Wall
+    -Wextra
+    -pedantic
+    -Werror
+    -Wconversion
+    -Wsign-conversion
+    # no parameter
+    -Wno-unused-parameter
+    #  -fsanitize=address # only for debug and test builds!
+    #  -fsanitize=undefined # only for debug and test builds!
+    )
+    target_compile_options(version_lib PRIVATE
+        -Wall
+        -Wextra
+        -pedantic
+        -Werror
+    )
+endif ()
+
+set(CMAKE_INSTALL_PREFIX ".")
+message(STATUS "<<CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}>>")
+
+install(TARGETS ip_filter RUNTIME DESTINATION bin)
+
+set(CPACK_GENERATOR DEB)
+
+set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+
+set(CPACK_PACKAGE_CONTACT example@example.com)
+
+include(CPack)
+
+enable_testing()
+add_test(test_ip_filter_gtest test_ip_filter_gtest) 
