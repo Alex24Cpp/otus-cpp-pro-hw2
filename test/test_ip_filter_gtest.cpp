@@ -3,5 +3,5 @@
 #include <lib.hpp>
 
 TEST(Version, Pozitive) {
-    ASSERT_GT(version(), 0);
+    ASSERT_GT(Version(), 0);
 }
