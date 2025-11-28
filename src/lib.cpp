@@ -2,6 +2,6 @@
 
 #include "version.hpp"
 
-int version() {
+int Version() {
     return PROJECT_VERSION_PATCH;
 }

@@ -1,13 +1,23 @@
-cmake_minimum_required(VERSION 3.7.2)
+cmake_minimum_required(VERSION 3.16)
 
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
-set(PROJECT_VESRION 0.0.${PATCH_VERSION})
+set(PROJECT_VERSION 0.0.${PATCH_VERSION})
 
-project(ip_filter VERSION ${PROJECT_VESRION})
+project(ip_filter VERSION ${PROJECT_VERSION})
+
+configure_file(src/version.h.in src/version.hpp)
 
 find_package(GTest REQUIRED)
 
-configure_file(src/version.h.in src/version.hpp)
+# Включает генерацию compile_commands.json (нужно для clang-tidy)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# clang-tidy
+option(CLANG-TIDY "Should do checking or not" OFF)
+message(STATUS "<<CLANG-TIDY: ${CLANG-TIDY}>>")
+if (CLANG-TIDY)
+    set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-p=${CMAKE_BINARY_DIR}")
+endif()
 
 add_executable(ip_filter
     src/ip_filter.cpp
@@ -42,13 +52,6 @@ target_link_libraries(test_ip_filter_gtest
     version_lib
 )
 
-# clang-tidy
-option(CLANG-TIDY "Should do checking or not" OFF)
-message(STATUS "<<CLANG-TIDY: ${CLANG-TIDY}>>")
-if (CLANG-TIDY)
-    set(CMAKE_CXX_CLANG_TIDY clang-tidy)
-endif()
-
 # clang-format
 option(CLANG-FORMAT "Should do formatting or not" OFF)
 message(STATUS "<<CLANG-FORMAT: ${CLANG-FORMAT}>>")
@@ -66,21 +69,31 @@ if (CLANG-FORMAT)
         COMMENT "Форматирование ${PROJECT_NAME} с ${CLANG-FORMAT_PATH}"
     )
     add_dependencies(ip_filter clangformat)
+    add_dependencies(test_ip_filter_gtest clangformat)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "<<Сборка: ${CMAKE_BUILD_TYPE}>>")
     target_compile_options(ip_filter PRIVATE
-    -Wall
-    -Wextra
-    -pedantic
-    -Werror
-    -Wconversion
-    -Wsign-conversion
-    # no parameter
-    -Wno-unused-parameter
-    #  -fsanitize=address # only for debug and test builds!
-    #  -fsanitize=undefined # only for debug and test builds!
+        -Wall
+        -Wextra
+        -pedantic
+        -Werror
+        -Wconversion
+        -Wsign-conversion
+        # no parameter
+        # -Wno-unused-parameter
+        # only for debug and test builds!
+        # -fsanitize=address
+        # -fsanitize=undefined
+        # -fsanitize=leak
+        # -fsanitize=thread
+    )
+    target_link_options(ip_filter PRIVATE 
+        # -fsanitize=address
+        # -fsanitize=undefined
+        # -fsanitize=leak
+        # -fsanitize=thread
     )
     target_compile_options(version_lib PRIVATE
         -Wall
@@ -91,7 +104,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif ()
 
 set(CMAKE_INSTALL_PREFIX ".")
-message(STATUS "<<CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}>>")
+message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
 install(TARGETS ip_filter RUNTIME DESTINATION bin)
 
@@ -101,7 +114,7 @@ set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
 
-set(CPACK_PACKAGE_CONTACT example@example.com)
+set(CPACK_PACKAGE_CONTACT mr.tutu2014@mail.ru)
 
 include(CPack)
 
