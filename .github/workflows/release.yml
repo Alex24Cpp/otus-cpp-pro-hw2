@@ -7,6 +7,9 @@ on:
 #      - feature/github_actions
   workflow_dispatch:
 
+permissions:
+  contents: write      # даёт GITHUB_TOKEN право создавать релизы и пушить теги
+
 jobs:
   build:
     runs-on: ubuntu-latest
