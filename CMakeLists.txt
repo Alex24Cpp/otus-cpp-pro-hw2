@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
-set(PROJECT_VERSION 0.0.${PATCH_VERSION})
+set(PROJECT_VERSION 1.0.${PATCH_VERSION})
 
 project(ip_filter VERSION ${PROJECT_VERSION})
 
@@ -21,6 +21,10 @@ endif()
 
 add_executable(ip_filter
     src/ip_filter.cpp
+    src/sort_ip.cpp
+    src/sort_ip.hpp
+    src/filtering_ip.cpp
+    src/filtering_ip.hpp
 )
 add_library(version_lib
     src/lib.cpp
