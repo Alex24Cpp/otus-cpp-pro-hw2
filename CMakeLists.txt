@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
-set(PROJECT_VERSION 1.0.${PATCH_VERSION})
+set(PROJECT_VERSION 1.1.${PATCH_VERSION})
 
 project(ip_filter VERSION ${PROJECT_VERSION})
 
@@ -32,9 +32,13 @@ add_library(version_lib
 )
 add_executable(test_ip_filter_gtest
     test/test_ip_filter_gtest.cpp
+    src/sort_ip.cpp
+    src/sort_ip.hpp
+    src/filtering_ip.cpp
+    src/filtering_ip.hpp
 )
 
-set_target_properties(ip_filter version_lib PROPERTIES
+set_target_properties(ip_filter version_lib test_ip_filter_gtest PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
@@ -112,7 +116,18 @@ message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
 install(TARGETS ip_filter RUNTIME DESTINATION bin)
 
+# тестовый бинарник
+install(TARGETS test_ip_filter_gtest RUNTIME DESTINATION tests)
+
 set(CPACK_GENERATOR DEB)
+
+# основной пакет
+set(CPACK_DEBIAN_PACKAGE_NAME "ip_filter")
+set(CPACK_DEBIAN_PACKAGE_COMPONENT "runtime")
+
+# пакет с тестами
+set(CPACK_DEBIAN_TESTS_PACKAGE_NAME "ip_filter-tests")
+set(CPACK_DEBIAN_TESTS_PACKAGE_COMPONENT "tests")
 
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
