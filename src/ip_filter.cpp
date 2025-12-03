@@ -26,6 +26,24 @@ std::vector<std::string> split(const std::string_view &str, char delim) {
     return result;
 }
 
+void printIP(const std::vector<std::vector<std::string>> &ip_pool) {
+    if (!ip_pool.empty()) {
+        for (const auto &ip_addr : ip_pool) {
+            bool first = true;
+            for (const auto &ip_part : ip_addr) {
+                if (!first) {
+                    std::cout << ".";
+                }
+                std::cout << ip_part;
+                first = false;
+            }
+            std::cout << '\n';
+        }
+    } else {
+        std::cout << "No data!" << '\n';
+    }
+}
+
 int main() {
     std::cout << "Start ip_filter. Version: " << Version() << '\n';
 
@@ -41,17 +59,7 @@ int main() {
 
         // TODO reverse lexicographically sort
 
-        for (const auto &ip_addr : ip_pool) {
-            bool first = true;
-            for (const auto &ip_part : ip_addr) {
-                if (!first) {
-                    std::cout << ".";
-                }
-                std::cout << ip_part;
-                first = false;
-            }
-            std::cout << '\n';
-        }
+        printIP(ip_pool);
 
         // 222.173.235.246
         // 222.130.177.64
