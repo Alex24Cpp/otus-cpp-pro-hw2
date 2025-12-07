@@ -1,3 +1,5 @@
+#include "ip_filter.h"
+
 #include <cstddef>
 #include <exception>
 #include <iostream>
@@ -6,9 +8,7 @@
 #include <vector>
 
 #include "filtering_ip.hpp"
-// #include "lib.hpp"
-#include "ip_filter.hpp"
-#include "sort_ip.hpp"
+#include "sort_ip.h"
 
 std::vector<std::string> split(const std::string_view &str, char delim) {
     std::vector<std::string> result;
@@ -42,8 +42,6 @@ void printIP(const std::vector<std::vector<std::string>> &ip_pool) {
 }
 
 int main() {
-    // std::cout << "Start ip_filter. Version: " << Version() << '\n';
-
     try {
         IP_VECTOR ip_pool;
 

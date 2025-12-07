@@ -6,9 +6,8 @@
 #include <vector>
 
 #include "filtering_ip.hpp"
-#include "ip_filter.hpp"
-#include "lib.hpp"
-#include "sort_ip.hpp"
+#include "ip_filter.h"
+#include "sort_ip.h"
 
 // ============= Тесты для функции split =============
 struct SplitTest : public ::testing::Test {
@@ -179,9 +178,4 @@ TEST_F(ReversSortTest, SortEmptyPool) {
     IP_VECTOR pool;
     reversSort(pool);
     ASSERT_EQ(pool.size(), 0);
-}
-
-// ============= Тест версии =============
-TEST(Version, Positive) {
-    ASSERT_GT(Version(), 0);
 }

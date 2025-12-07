@@ -1,11 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
-set(PROJECT_VERSION 1.1.${PATCH_VERSION})
+set(PROJECT_VERSION "0.0.1" CACHE INTERNAL "Project version")
 
 project(ip_filter VERSION ${PROJECT_VERSION})
-
-configure_file(src/version.h.in src/version.hpp)
 
 find_package(GTest REQUIRED)
 
@@ -21,34 +18,26 @@ endif()
 
 add_executable(ip_filter
     src/ip_filter.cpp
+    src/ip_filter.h
     src/sort_ip.cpp
-    src/sort_ip.hpp
+    src/sort_ip.h
     src/filtering_ip.cpp
     src/filtering_ip.hpp
-)
-add_library(version_lib
-    src/lib.cpp
-    src/lib.hpp
 )
 add_executable(test_ip_filter_gtest
     test/test_ip_filter_gtest.cpp
     src/sort_ip.cpp
-    src/sort_ip.hpp
+    src/sort_ip.h
     src/filtering_ip.cpp
     src/filtering_ip.hpp
 )
 
-set_target_properties(ip_filter version_lib test_ip_filter_gtest PROPERTIES
+set_target_properties(
+    ip_filter 
+    test_ip_filter_gtest 
+    PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
-)
-
-target_include_directories(version_lib
-    PRIVATE "${CMAKE_BINARY_DIR}/src"
-)
-
-target_link_libraries(ip_filter PRIVATE
-    version_lib
 )
 
 target_include_directories(test_ip_filter_gtest
@@ -57,7 +46,6 @@ target_include_directories(test_ip_filter_gtest
 
 target_link_libraries(test_ip_filter_gtest
     ${GTEST_BOTH_LIBRARIES}
-    version_lib
 )
 
 # clang-format
@@ -103,16 +91,16 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         # -fsanitize=leak
         # -fsanitize=thread
     )
-    target_compile_options(version_lib PRIVATE
-        -Wall
-        -Wextra
-        -pedantic
-        -Werror
-    )
+    # target_compile_options(version_lib PRIVATE
+    #     -Wall
+    #     -Wextra
+    #     -pedantic
+    #     -Werror
+    # )
 endif ()
 
 set(CMAKE_INSTALL_PREFIX ".")
-message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "<<CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}>>")
 
 install(TARGETS ip_filter RUNTIME DESTINATION bin)
 

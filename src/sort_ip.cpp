@@ -1,10 +1,10 @@
-#include "sort_ip.hpp"
+#include "sort_ip.h"
 
 #include <algorithm>
 #include <string>
 #include <vector>
 
-#include "ip_filter.hpp"
+#include "ip_filter.h"
 
 void reversSort(IP_VECTOR &ip_pool) {
     std::sort(

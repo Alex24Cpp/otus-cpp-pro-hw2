@@ -1,5 +1,5 @@
 #pragma once
 
-#include "ip_filter.hpp"
+#include "ip_filter.h"
 
 void reversSort(IP_VECTOR &ip_pool);

@@ -2,9 +2,8 @@ name: 'C++ CI'
 
 on:
   push:
-#    branches:
-#      - master
-#      - feature/github_actions
+    tags:
+      - 'v*.*.*'
   workflow_dispatch:
 
 permissions:
@@ -25,23 +24,24 @@ jobs:
         run: |
           sudo cmake .
           sudo cmake --build . --target install
+      - name: Get version
+        run: |
+          PROJECT_VERSION="${{ github.ref_name }}"
+          echo "PROJECT_VERSION=${PROJECT_VERSION#v}" >> $GITHUB_ENV
       - name: Project build
         run: |
-          cmake . -DPATCH_VERSION=${{ github.run_number }} -DCMAKE_BUILD_TYPE=Release
+          cmake . -DPROJECT_VERSION=${{ env.PROJECT_VERSION }} -DCMAKE_BUILD_TYPE=Release
           cmake --build .
           cmake --build . --target test
           cmake --build . --target package
-      - name: Extract version from CMake
-        run: |
-          echo "PROJECT_VERSION=$(cat ./CMakeCache.txt | grep PROJECT_VERSION: | cut -d= -f2)" >> $GITHUB_ENV
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.PROJECT_VERSION }}
-          release_name: Release ${{ env.PROJECT_VERSION }}
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
