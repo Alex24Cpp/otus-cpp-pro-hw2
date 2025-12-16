@@ -2,11 +2,14 @@
 
 #include <stdexcept>
 #include <string>
+#include <variant>
 #include <vector>
 
 #include "ip_filter.h"
 
-IP_VECTOR filterAny(const IP_VECTOR &ip_pool, const std::string &octet);
+using Octet = std::variant<std::string, const char *, int>;
+
+IP_VECTOR filterAny(const IP_VECTOR &ip_pool, const Octet &octet);
 
 template <typename... Octets>
 IP_VECTOR filter(const IP_VECTOR &ip_pool, Octets... octets) {
