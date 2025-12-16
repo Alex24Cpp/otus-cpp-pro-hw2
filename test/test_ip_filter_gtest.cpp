@@ -100,29 +100,29 @@ struct FilterAnyTest : public ::testing::Test {
 };
 
 TEST_F(FilterAnyTest, FilterAnyByOctet) {
-    auto result = filter_any(pool, "168");
+    auto result = filterAny(pool, "168");
     ASSERT_EQ(result.size(), 4);
 }
 
 TEST_F(FilterAnyTest, FilterAnyNoResults) {
-    auto result = filter_any(pool, "99");
+    auto result = filterAny(pool, "99");
     ASSERT_EQ(result.size(), 0);
 }
 
 TEST_F(FilterAnyTest, FilterAnyEmptyPool) {
     const IP_VECTOR pool;
-    auto result = filter_any(pool, "192");
+    auto result = filterAny(pool, "192");
     ASSERT_EQ(result.size(), 0);
 }
 
 TEST_F(FilterAnyTest, FilterAnySingleMatch) {
-    auto result = filter_any(pool, "172");
+    auto result = filterAny(pool, "172");
     ASSERT_EQ(result.size(), 1);
     EXPECT_EQ(result[0][0], "172");
 }
 
 TEST_F(FilterAnyTest, FilterAnyMultipleOctets) {
-    auto result = filter_any(pool, "1");
+    auto result = filterAny(pool, "1");
     ASSERT_EQ(result.size(), 4);  // 1 появляется в нескольких октетах
 }
 

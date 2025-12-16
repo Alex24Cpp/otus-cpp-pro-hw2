@@ -91,12 +91,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         # -fsanitize=leak
         # -fsanitize=thread
     )
-    # target_compile_options(version_lib PRIVATE
-    #     -Wall
-    #     -Wextra
-    #     -pedantic
-    #     -Werror
-    # )
 endif ()
 
 set(CMAKE_INSTALL_PREFIX ".")

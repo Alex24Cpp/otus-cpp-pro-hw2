@@ -23,7 +23,7 @@ std::vector<std::string> split(const std::string_view &str, char delim) {
     return result;
 }
 
-void printIP(const std::vector<std::vector<std::string>> &ip_pool) {
+void printIP(const IP_VECTOR &ip_pool) {
     if (!ip_pool.empty()) {
         for (const auto &ip_addr : ip_pool) {
             bool first = true;
@@ -61,7 +61,7 @@ int main() {
         ip_pool_filtered = filter(ip_pool, "46", "70");
         printIP(ip_pool_filtered);
 
-        ip_pool_filtered = filter_any(ip_pool, "46");
+        ip_pool_filtered = filterAny(ip_pool, "46");
         printIP(ip_pool_filtered);
 
     } catch (const std::exception &e) {
