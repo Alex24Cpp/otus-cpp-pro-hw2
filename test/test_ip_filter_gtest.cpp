@@ -140,6 +140,20 @@ TEST_F(FilterAnyTest, FilterAnyMultipleOctets) {
     ASSERT_EQ(result.size(), 4);  // 1 появляется в нескольких октетах
 }
 
+TEST_F(FilterAnyTest, FilterAnyByIntOctetSingleMatch) {
+    const Octet oct = 172;
+    auto result = filterAny(ip_pool, oct);
+    ASSERT_EQ(result.size(), 1);
+    EXPECT_EQ(result[0][0], "172");
+}
+
+TEST_F(FilterAnyTest, FilterAnyByStringOctetSingleMatch) {
+    const Octet oct = std::string{"172"};
+    auto result = filterAny(ip_pool, oct);
+    ASSERT_EQ(result.size(), 1);
+    EXPECT_EQ(result[0][0], "172");
+}
+
 // ============= Тесты для функции reversSort =============
 struct ReversSortTest : public ::testing::Test {
 protected:
